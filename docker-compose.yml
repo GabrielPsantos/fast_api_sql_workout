@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  fast-api-application:
+    #console interaction
+    stdin_open: true
+    tty: true
+    #build folder
+    build: ./app
+    #initial command
+    command: uvicorn api.main:app --reload --workers 1 --host 0.0.0.0 --port 8080
+    #file inside container
+    volumes:
+      - ./app/:/usr/src/app/
+    ports:
+      #ports external/internal
+      - "8080:8080"
+    depends_on:
+      - postgres-container
+    #Environment vars
+    env_file: 
+      - ./.env.dev
+  postgres-container:
+    # image/name
+    image: postgres:11
+    ports:
+      #ports external/internal
+      - "5432:5432"
+    env_file: 
+      - ./.env.dev
+volumes:
+  #postgress volume
+  postgres_data:
